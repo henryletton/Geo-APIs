@@ -50,3 +50,26 @@ data = response.text
 
 crime_df = pd.read_json(data)
 
+crime_df.columns
+
+print(crime_df['location'][0]['latitude'])
+print(crime_df['location'][0]['longitude'])
+
+print(crime_df.groupby('category')['category'].count())
+
+
+#%% data manipulation
+#lonlat = crime_df.location.apply(pd.Series)
+#geo_data = pd.concat([crime_df['category'], lonlat[['latitude','longitude']]], axis=1)
+
+#%% Food Standards Agency
+
+parameters = {"latitude": 51.886685, "longitude": 0.886988, "maxDistanceLimit": 10, "pageSize": 5}
+hdrs = {'x-api-version': '2'}
+
+response = requests.get("https://api.ratings.food.gov.uk/Establishments", params=parameters, headers=hdrs)
+
+print(response.status_code)
+print(response.content)
+
+
