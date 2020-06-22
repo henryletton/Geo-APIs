@@ -11,6 +11,7 @@ Date: 2020/06/17
 
 import requests
 import pandas as pd
+import numpy as np
 
 #%% Test opennotify API
 
@@ -59,17 +60,51 @@ print(crime_df.groupby('category')['category'].count())
 
 
 #%% data manipulation
-#lonlat = crime_df.location.apply(pd.Series)
-#geo_data = pd.concat([crime_df['category'], lonlat[['latitude','longitude']]], axis=1)
+lonlat = crime_df.location.apply(pd.Series)
+geo_data = pd.concat([crime_df['category'], lonlat[['latitude','longitude']]], axis=1)
 
 #%% Food Standards Agency
 
-parameters = {"latitude": 51.886685, "longitude": 0.886988, "maxDistanceLimit": 10, "pageSize": 5}
+parameters = {"latitude": 51.886685, "longitude": 0.886988, "maxDistanceLimit": 10, "pageSize": 1}
 hdrs = {'x-api-version': '2'}
 
 response = requests.get("https://api.ratings.food.gov.uk/Establishments", params=parameters, headers=hdrs)
 
 print(response.status_code)
 print(response.content)
+
+#%% Public heatlht england - fingertips API
+
+response = requests.get("http://fingertips.phe.org.uk/api/profiles")
+
+print(response.status_code)
+
+profiles = pd.read_json(response.text)
+
+profiles['Key'].head(5)
+
+profiles2 = profiles[profiles.Key == "general-practice"]
+
+profiles3 = pd.DataFrame(profiles2['GroupMetadata'].values[0])
+
+
+
+
+
+
+#%% Air Quality
+
+parameters = {"coordinates": "51.886685, 0.886988", "radius": 100000, "limit": 3}
+
+response = requests.get("https://api.openaq.org/v1/measurements", params=parameters)
+
+print(response.status_code)
+
+print(response.content)
+
+
+
+
+
 
 
